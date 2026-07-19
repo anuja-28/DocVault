@@ -64,6 +64,8 @@ public class Document {
         return fileType;
     }
 
+
+    
       public void setUploadedAt(LocalDateTime uploadedAt) {
         this.uploadedAt = uploadedAt;
     }
@@ -115,6 +117,14 @@ public class Document {
 
     public String getFilePath() {
         return filePath;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }

@@ -10,6 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.PostMapping;
 import com.acube.docvault.service.DocumentService;
 import java.io.File;
+import com.acube.docvault.entity.Document;
+import com.acube.docvault.entity.User;
 
 
 @RestController
@@ -38,6 +40,22 @@ public String uploadDocument(
     String fileName = file.getOriginalFilename();
 
     file.transferTo(new File(uploadDir + fileName));
+
+    Document document = new Document();
+
+    document.setTitle(fileName);
+    document.setOriginalFileName(fileName);
+    document.setStoredFileName(fileName);
+    document.setFileType(file.getContentType());
+    document.setFileSize(file.getSize());
+    document.setFilePath(uploadDir + fileName);
+
+    User user = new User();
+user.setUserId(1L);
+
+document.setUser(user);
+
+    documentService.saveDocument(document);
 
     return "File uploaded successfully: " + fileName;
 }
