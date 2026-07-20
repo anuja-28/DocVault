@@ -7,12 +7,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import com.acube.docvault.service.DocumentService;
 import java.io.File;
 import com.acube.docvault.entity.Document;
 import com.acube.docvault.entity.User;
-
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/docs")
@@ -58,6 +59,11 @@ document.setUser(user);
     documentService.saveDocument(document);
 
     return "File uploaded successfully: " + fileName;
+}
+
+@GetMapping("/list")
+public List<Document> listDocuments() {
+    return documentService.getDocumentsByUserId(1L);
 }
 
 }
