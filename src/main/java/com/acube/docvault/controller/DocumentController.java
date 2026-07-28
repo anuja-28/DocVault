@@ -1,19 +1,27 @@
 package com.acube.docvault.controller;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import com.acube.docvault.service.DocumentService;
 import java.io.File;
 import com.acube.docvault.entity.Document;
 import com.acube.docvault.entity.User;
 import java.util.List;
+import java.nio.file.Path;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+
 
 @RestController
 @RequestMapping("/api/docs")
@@ -65,5 +73,26 @@ document.setUser(user);
 public List<Document> listDocuments() {
     return documentService.getDocumentsByUserId(1L);
 }
+
+@GetMapping("/download/{documentId}")
+public ResponseEntity<Resource> downloadDocs(@PathVariable Long documentId) throws Exception {
+   
+    Document document = documentService.getDocumentById(documentId);
+
+    Path filePath = Paths.get(document.getFilePath());
+
+    Resource resource = new UrlResource(filePath.toUri());
+
+    if (!resource.exists()) {
+        throw new RuntimeException("File not found: " + document.getFilePath());
+    }
+
+     return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename=\"" + document.getOriginalFileName() + "\"")
+            .body(resource);
+
+}
+
 
 }

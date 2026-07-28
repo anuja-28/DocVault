@@ -20,4 +20,11 @@ public List<Document> getDocumentsByUserId(Long userId) {
     return documentRepository.findByUserUserId(userId);
 }
 
+public Document getDocumentById(Long documentId) {
+    return documentRepository.findById(documentId)
+            .orElseThrow(() -> new RuntimeException("Document not found with id: " + documentId));
+
+}
+
+
 }
