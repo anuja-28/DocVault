@@ -4,7 +4,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.acube.docvault.repository.DocumentRepository;
 import com.acube.docvault.entity.Document;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
+import java.nio.file.Path;
+
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DocumentService {
@@ -24,6 +30,18 @@ public Document getDocumentById(Long documentId) {
     return documentRepository.findById(documentId)
             .orElseThrow(() -> new RuntimeException("Document not found with id: " + documentId));
 
+}
+
+@Transactional
+public void deleteDocument(Long documentId) throws Exception {
+
+    Document document = getDocumentById(documentId);
+
+    Path path = Paths.get(document.getFilePath());
+
+    Files.deleteIfExists(path);
+
+    documentRepository.delete(document);
 }
 
 

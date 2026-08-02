@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -94,5 +95,12 @@ public ResponseEntity<Resource> downloadDocs(@PathVariable Long documentId) thro
 
 }
 
+@DeleteMapping("/delete/{documentId}")
+public String deleteDocument(@PathVariable Long documentId) throws Exception {
+
+    documentService.deleteDocument(documentId);
+
+    return "Document deleted successfully.";
+}
 
 }
