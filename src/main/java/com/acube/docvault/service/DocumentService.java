@@ -31,11 +31,14 @@ public Document getDocumentById(Long documentId) {
             .orElseThrow(() -> new RuntimeException("Document not found with id: " + documentId));
 
 }
-
 @Transactional
-public void deleteDocument(Long documentId) throws Exception {
+public void deleteDocument(Long documentId, Long userId) throws Exception {
 
     Document document = getDocumentById(documentId);
+
+    if (!document.getUser().getUserId().equals(userId)) {
+        throw new RuntimeException("You are not allowed to delete this document");
+    }
 
     Path path = Paths.get(document.getFilePath());
 
@@ -43,6 +46,5 @@ public void deleteDocument(Long documentId) throws Exception {
 
     documentRepository.delete(document);
 }
-
 
 }

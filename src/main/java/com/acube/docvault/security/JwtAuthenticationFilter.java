@@ -12,7 +12,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
+import java.util.Collections;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -28,29 +28,45 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader("Authorization");
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+System.out.println("AUTH HEADERrr = " + authHeader);
 
-        String token = authHeader.substring(7);
+if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+    System.out.println("NO BEARER TOKEN");
+    filterChain.doFilter(request, response);
 
-        if (jwtService.isTokenValid(token)) {
+    return;
+}
 
-            String email = jwtService.extractEmail(token);
+String token = authHeader.substring(7);
 
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                            email,
-                            null,
-                            null
-                    );
+System.out.println("TOKEN RECEIVED");
 
-            SecurityContextHolder
-                    .getContext()
-                    .setAuthentication(authentication);
-        }
+if (jwtService.isTokenValid(token)) {
 
-        filterChain.doFilter(request, response);
+    System.out.println("TOKEN VALID");
+
+    String email = jwtService.extractEmail(token);
+
+    System.out.println("EMAIL = " + email);
+
+    UsernamePasswordAuthenticationToken authentication =
+            new UsernamePasswordAuthenticationToken(
+                    email,
+                    null,
+                    Collections.emptyList()
+            );
+
+    SecurityContextHolder
+            .getContext()
+            .setAuthentication(authentication);
+
+    System.out.println("AUTHENTICATION SET = "
+            + SecurityContextHolder.getContext().getAuthentication());
+    
+} else {
+    System.out.println("TOKEN INVALIlD");
+}
+
+filterChain.doFilter(request, response);
     }
 }
