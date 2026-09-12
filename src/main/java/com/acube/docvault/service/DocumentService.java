@@ -11,6 +11,9 @@ import java.util.List;
 import java.nio.file.Path;
 
 import org.springframework.transaction.annotation.Transactional;
+import com.acube.docvault.exception.DocumentNotFoundException;
+import com.acube.docvault.exception.DocumentAccessDeniedException;
+
 
 @Service
 public class DocumentService {
@@ -28,7 +31,7 @@ public List<Document> getDocumentsByUserId(Long userId) {
 
 public Document getDocumentById(Long documentId) {
     return documentRepository.findById(documentId)
-            .orElseThrow(() -> new RuntimeException("Document not found with id: " + documentId));
+            .orElseThrow(() -> new DocumentNotFoundException("Document not found with id: " + documentId));
 
 }
 @Transactional
@@ -37,7 +40,7 @@ public void deleteDocument(Long documentId, Long userId) throws Exception {
     Document document = getDocumentById(documentId);
 
     if (!document.getUser().getUserId().equals(userId)) {
-        throw new RuntimeException("You are not allowed to delete this document");
+        throw new DocumentAccessDeniedException("You are not allowed to delete this document");
     }
 
     Path path = Paths.get(document.getFilePath());

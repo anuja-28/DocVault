@@ -26,7 +26,9 @@ import java.nio.file.Path;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
-
+import com.acube.docvault.exception.DocumentAccessDeniedException;
+import com.acube.docvault.exception.DocumentNotFoundException;
+import com.acube.docvault.exception.UserNotFoundException;
 @RestController
 @RequestMapping("/api/docs")
 public class DocumentController {
@@ -70,7 +72,7 @@ public class DocumentController {
         String email = authentication.getName();
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         document.setUser(user);
 
@@ -87,7 +89,7 @@ public class DocumentController {
         String email = authentication.getName();
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         return documentService.getDocumentsByUserId(user.getUserId());
     }
@@ -101,12 +103,12 @@ public class DocumentController {
         String email = authentication.getName();
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Document document = documentService.getDocumentById(documentId);
 
         if (!document.getUser().getUserId().equals(user.getUserId())) {
-            throw new RuntimeException(
+            throw new DocumentAccessDeniedException(
                     "You are not allowed to download this document");
         }
 
@@ -115,7 +117,7 @@ public class DocumentController {
         Resource resource = new UrlResource(filePath.toUri());
 
         if (!resource.exists()) {
-            throw new RuntimeException(
+            throw new DocumentNotFoundException(
                     "File not found: " + document.getFilePath());
         }
 
@@ -133,7 +135,7 @@ public class DocumentController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         documentService.deleteDocument(documentId, user.getUserId());
 

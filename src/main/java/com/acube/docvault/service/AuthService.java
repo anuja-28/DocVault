@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.acube.docvault.dto.LoginRequest;
 import com.acube.docvault.entity.User;
+import com.acube.docvault.exception.UserNotFoundException;
 import com.acube.docvault.repository.UserRepository;
 import com.acube.docvault.security.JwtService;
 
@@ -24,7 +25,7 @@ private JwtService jwtService;
     public String login(LoginRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
        if (!passwordEncoder.matches(
         request.getPassword(),
