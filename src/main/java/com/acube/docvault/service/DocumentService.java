@@ -91,4 +91,10 @@ public class DocumentService {
 
     }
 
+    public List<Document> searchDocuments(Long userId, String str) {
+        return documentRepository.findByUserUserIdAndTitleContainingIgnoreCase(userId, str);
+    }
+
+
+
 }

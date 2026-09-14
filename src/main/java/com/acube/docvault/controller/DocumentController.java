@@ -167,4 +167,20 @@ public class DocumentController {
 
         return "Document updated successfully.";
     }
+
+    @GetMapping("/search")
+    public List<Document> searchDocuments(
+            @RequestParam String str) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        return documentService.searchDocuments(
+                user.getUserId(),
+                str);
+    }
 }

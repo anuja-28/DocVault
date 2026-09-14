@@ -8,5 +8,8 @@ public interface DocumentRepository
         extends JpaRepository<Document, Long> {
 
                 List<Document> findByUserUserId(Long userId);
+                List<Document> findByUserUserIdAndTitleContainingIgnoreCase(
+        Long userId,
+        String title);
 
 }
