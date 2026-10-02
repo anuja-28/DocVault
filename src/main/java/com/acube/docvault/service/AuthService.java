@@ -20,23 +20,22 @@ public class AuthService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-private JwtService jwtService;
+    private JwtService jwtService;
 
     public String login(LoginRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-       if (!passwordEncoder.matches(
-        request.getPassword(),
-        user.getPassword())) {
+        if (!passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword())) {
 
-    throw new RuntimeException("Invalid password");
-}
+            throw new RuntimeException("Invalid password");
+        }
 
         return jwtService.generateToken(
-        user.getUserId(),
-        user.getEmail()
-);
+                user.getUserId(),
+                user.getEmail());
     }
 }
